@@ -15,7 +15,7 @@ class User
 
   validates :login, :presence => true, :uniqueness => { :scope => :site }, :format => { :with => /^[\w\-]+$/ }
   validates :email, :uniqueness => { :case_sensitive => false, :scope => :site, :message => "is already taken" }, :confirmation => true
-  validates :role, :presence => true, :inclusion => { :in => ["admin", "moderator", "member"]}  
+  validates :role, :presence => true, :inclusion => { :in => ["admin", "moderator", "member"] }, :exclusion => { :in => ["guest", "unknown"] }
   validates :profile, :presence => true, :associated => true
 
   def admin?
