@@ -33,7 +33,7 @@ module Mongoid
         end
 
         def as_inverse_of(association_inverse_name)
-          raise "#{@association[:type].inspect} does not respond to :inverse_of" unless [BELONGS_TO, EMBEDDED_IN].include?(@association[:type])
+          raise "#{@association[:type].inspect} does not respond to :inverse_of" unless [HAS_MANY, HAS_AND_BELONGS_TO_MANY, BELONGS_TO, EMBEDDED_IN].include?(@association[:type])
           @association[:inverse_of] = association_inverse_name.to_s
           @expectation_message << " which is an inverse of #{@association[:inverse_of].inspect}"
           self
@@ -42,6 +42,18 @@ module Mongoid
         def with_dependent(method_name)
           @association[:dependent] = method_name  
           @expectation_message << " which specifies dependent as #{@association[:dependent].to_s}"
+          self
+        end
+
+        def with_autosave
+          @association[:autosave] = true  
+          @expectation_message << " which specifies autosave as #{@association[:autosave].to_s}"
+          self
+        end
+        
+        def with_index
+          @association[:index] = true
+          @expectation_message << " which specifies index as #{@association[:index].to_s}"
           self
         end
         
@@ -96,6 +108,24 @@ module Mongoid
               return false
             else
               @positive_result_message = "#{@positive_result_message} which specified dependent as #{metadata.dependent}"
+            end
+          end
+
+          if @association[:autosave]
+            if metadata.autosave != true
+              @negative_result_message = "#{@positive_result_message} which did not set autosave"
+              return false
+            else
+              @positive_result_message = "#{@positive_result_message} which set autosave"
+            end
+          end
+
+          if @association[:index]
+            if metadata.index != true
+              @negative_result_message = "#{@positive_result_message} which did not set index"
+              return false
+            else
+              @positive_result_message = "#{@positive_result_message} which set index"
             end
           end
           

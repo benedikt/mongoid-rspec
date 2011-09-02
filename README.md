@@ -17,6 +17,8 @@ Association Matchers
       
       #can also specify with_dependent to test if :dependent => :destroy/:destroy_all/:delete is set
       it { should have_many(:comments).with_dependent(:destroy) }
+      #can verify autosave is set to true
+      it { should have_many(:comments).with_autosave }
   
       it { should embed_one :profile }
   
@@ -31,6 +33,7 @@ Association Matchers
     describe Article do
       it { should be_referenced_in(:author).of_type(User).as_inverse_of(:articles) }
       it { should belong_to(:author).of_type(User).as_inverse_of(:articles) }
+      it { should belong_to(:author).of_type(User).as_inverse_of(:articles).with_index }
       it { should embed_many(:comments) }
     end
 
@@ -79,6 +82,9 @@ Others
       it { should have_fields(:email, :login) }
       it { should have_field(:active).of_type(Boolean).with_default_value_of(false) }
       it { should have_fields(:birthdate, :registered_at).of_type(DateTime) }
+
+      it { should have_index_for(:last_name) }
+      it { should have_index_for(:email).with_options(:unique => true) }
 
       # useful if you use factory_girl and have Factory(:user) defined for User
       it { should save }

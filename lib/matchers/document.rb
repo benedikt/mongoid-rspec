@@ -24,8 +24,8 @@ module Mongoid
             if @type and @klass.fields[attr].type != @type
               error << " of type #{@klass.fields[attr].type}"
             end
-
-            if @default and @klass.fields[attr].default != @default
+            
+            if !@default.nil? and !@klass.fields[attr].default.nil? and @klass.fields[attr].default != @default
               error << " with default value of #{@klass.fields[attr].default}"
             end
 
@@ -48,7 +48,7 @@ module Mongoid
       def description
         desc = "have #{@attributes.size > 1 ? 'fields' : 'field'} named #{@attributes.collect(&:inspect).to_sentence}"
         desc << " of type #{@type.inspect}" if @type
-        desc << " with default value of #{@default.inspect}" if @default
+        desc << " with default value of #{@default.inspect}" if !@default.nil?
         desc
       end
     end
@@ -72,24 +72,40 @@ end
 
 RSpec::Matchers.define :be_mongoid_document do
   match do |doc|
-    doc.class.included_modules.should include(Mongoid::Document)
+    doc.class.included_modules.include?(Mongoid::Document)
   end
+  
+  description do
+    "be a Mongoid document"
+  end  
 end
 
 RSpec::Matchers.define :be_versioned_document do
   match do |doc|
-    doc.class.included_modules.should include(Mongoid::Versioning)
+    doc.class.included_modules.include?(Mongoid::Versioning)
   end
+  
+  description do
+    "be a versioned Mongoid document"
+  end    
 end
 
 RSpec::Matchers.define :be_timestamped_document do
   match do |doc|
-    doc.class.included_modules.should include(Mongoid::Timestamps)
+    doc.class.included_modules.include?(Mongoid::Timestamps)
   end
+  
+  description do
+    "be a timestamped Mongoid document"
+  end      
 end
 
 RSpec::Matchers.define :be_paranoid_document do
   match do |doc|
-    doc.class.included_modules.should include(Mongoid::Paranoia)
+    doc.class.included_modules.include?(Mongoid::Paranoia)
   end
+  
+  description do
+    "be a paranoid Mongoid document"
+  end      
 end

@@ -8,8 +8,8 @@ describe "Associations" do
     it { should reference_one(:record) }
     it { should have_one(:record) }    
     
-    it { should reference_many(:comments).with_dependent(:destroy) }
-    it { should have_many(:comments).with_dependent(:destroy) }
+    it { should reference_many(:comments).with_dependent(:destroy).with_autosave }
+    it { should have_many(:comments).with_dependent(:destroy).with_autosave }
     
     it { should embed_one :profile }
     
@@ -23,8 +23,9 @@ describe "Associations" do
 
   describe Article do
     it { should be_referenced_in(:author).of_type(User).as_inverse_of(:articles) }
-    it { should belong_to(:author).of_type(User).as_inverse_of(:articles) }
+    it { should belong_to(:author).of_type(User).as_inverse_of(:articles).with_index }
     it { should embed_many(:comments) }
+    it { should embed_one(:permalink) }    
   end
 
   describe Comment do
@@ -38,5 +39,9 @@ describe "Associations" do
 
   describe Permalink do
     it { should be_embedded_in(:linkable).as_inverse_of(:link) }
+  end
+
+  describe Site do
+    it { should reference_many(:users).as_inverse_of(:site) }
   end
 end
